@@ -12,11 +12,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Importar rotas
+const authRoutes = require('./routes/auth');
 const clientesRoutes = require('./routes/clientes');
 const produtosRoutes = require('./routes/produtos');
 const vendasRoutes = require('./routes/vendas');
 
 // Usar rotas
+app.use('/api/auth', authRoutes);
 app.use('/api/clientes', clientesRoutes);
 app.use('/api/produtos', produtosRoutes);
 app.use('/api/vendas', vendasRoutes);
@@ -26,6 +28,7 @@ app.get('/', (req, res) => {
   res.json({ 
     message: 'API Sistema de Vendas funcionando!',
     endpoints: {
+      auth: '/api/auth',
       clientes: '/api/clientes',
       produtos: '/api/produtos',
       vendas: '/api/vendas'

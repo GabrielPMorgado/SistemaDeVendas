@@ -1,7 +1,15 @@
-# Sistema de Vendas - Demonstração de Relacionamentos 1:N e N:N
+# Sistema de Vendas - Demonstração de Relacionamentos 1:N e N:N + Autenticação JWT
 
 ## Visão Geral do Projeto
-Sistema completo desenvolvido para demonstrar relacionamentos de banco de dados através de uma aplicação prática de vendas, utilizando as tecnologias **Node.js**, **React** e **MySQL**.
+Sistema completo desenvolvido para demonstrar relacionamentos de banco de dados através de uma aplicação prática de vendas, utilizando as tecnologias **Node.js**, **React** e **MySQL**, agora com **sistema completo de autenticação JWT** implementado.
+
+## 🆕 NOVAS FUNCIONALIDADES
+- ✅ **Sistema de Login/Registro** com validação
+- ✅ **Autenticação JWT** com tokens seguros
+- ✅ **Proteção de rotas** no frontend e backend
+- ✅ **Gerenciamento de usuários** com roles (admin/user)
+- ✅ **Interface moderna** com tela de login responsiva
+- ✅ **Hash de senhas** com bcryptjs
 
 ## Relacionamentos Implementados
 
@@ -13,10 +21,29 @@ Sistema completo desenvolvido para demonstrar relacionamentos de banco de dados 
 - **Vendas ↔ Produtos**: Uma venda pode conter vários produtos, um produto pode estar em várias vendas
 - Implementado via tabela intermediária `venda_produtos`
 
+## 🔐 Sistema de Autenticação
+
+### Usuários de Teste
+- **Admin**: admin@sistema.com / admin123
+- **Usuário**: usuario@sistema.com / user123
+
+### Endpoints de Autenticação
+- `POST /api/auth/register` - Registrar novo usuário
+- `POST /api/auth/login` - Fazer login
+- `GET /api/auth/verify` - Verificar token
+- `GET /api/auth/profile` - Perfil do usuário
+
+### Segurança Implementada
+- Hash de senhas com bcryptjs (salt rounds: 10)
+- Tokens JWT com expiração de 24h
+- Middleware de autenticação em todas as rotas protegidas
+- Proteção de rotas no frontend com React Context
+
 ## Tecnologias Utilizadas
-- **Backend**: Node.js, Express, MySQL2, CORS, dotenv
-- **Frontend**: React 18 + Vite ⚡, Axios, CSS3
+- **Backend**: Node.js, Express, MySQL2, JWT, bcryptjs, CORS, dotenv
+- **Frontend**: React 18 + Vite ⚡, Axios, Context API, CSS3
 - **Banco de Dados**: MySQL 8.0+
+- **Autenticação**: JSON Web Tokens (JWT)
 
 ## Estrutura do Projeto
 

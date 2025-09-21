@@ -2,6 +2,17 @@
 CREATE DATABASE IF NOT EXISTS sistema_vendas;
 USE sistema_vendas;
 
+-- Tabela de usuários para autenticação
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('user', 'admin') DEFAULT 'user',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 -- Tabela de clientes (relacionamento 1:N com vendas)
 CREATE TABLE IF NOT EXISTS clientes (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -90,3 +101,12 @@ UPDATE produtos SET estoque = estoque - 1 WHERE id = 4; -- Monitor
 UPDATE produtos SET estoque = estoque - 1 WHERE id = 6; -- Webcam
 UPDATE produtos SET estoque = estoque - 3 WHERE id = 7; -- Headset
 UPDATE produtos SET estoque = estoque - 2 WHERE id = 8; -- SSD
+
+-- Usuário administrador padrão (senha: admin123)
+-- Hash gerado com bcryptjs saltRounds=10
+INSERT INTO users (username, email, password, role) VALUES
+('admin', 'admin@sistema.com', '$2a$10$/xh46mCRUoJxEKnI1FwEKerOCQpPvaC2AfHVrm6Qntwi5OZvTepcm', 'admin');
+
+-- Usuário comum de exemplo (senha: user123)
+INSERT INTO users (username, email, password, role) VALUES
+('usuario', 'usuario@sistema.com', '$2a$10$RPuZa07Yjzmz/SgDa112pelwlO05Zt/ImbixlBu2o6q1cWbVAzGWi', 'user');

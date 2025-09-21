@@ -1,11 +1,14 @@
 import React, { useState } from 'react'
+import { AuthProvider } from './contexts/AuthContext.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
+import Header from './components/Header.jsx'
 import ClientesList from './components/ClientesList.jsx'
 import ProdutosList from './components/ProdutosList.jsx'
 import NovaVenda from './components/NovaVenda.jsx'
 import VendasList from './components/VendasList.jsx'
 import './App.css'
 
-function App() {
+function AppContent() {
   const [activeTab, setActiveTab] = useState('nova-venda')
 
   const renderContent = () => {
@@ -18,6 +21,8 @@ function App() {
         return <NovaVenda />
       case 'vendas':
         return <VendasList />
+      case 'usuarios':
+        return <div>Gerenciamento de usuários em desenvolvimento...</div>
       default:
         return <NovaVenda />
     }
@@ -25,39 +30,7 @@ function App() {
 
   return (
     <div className="App">
-      <header className="header">
-        <div className="container">
-          <h1>Sistema de Vendas</h1>
-          <p>Demonstração de Relacionamentos 1:N e N:N com React + Vite</p>
-          
-          <nav className="nav">
-            <button
-              className={activeTab === 'nova-venda' ? 'active' : ''}
-              onClick={() => setActiveTab('nova-venda')}
-            >
-              Nova Venda
-            </button>
-            <button
-              className={activeTab === 'vendas' ? 'active' : ''}
-              onClick={() => setActiveTab('vendas')}
-            >
-              Histórico
-            </button>
-            <button
-              className={activeTab === 'clientes' ? 'active' : ''}
-              onClick={() => setActiveTab('clientes')}
-            >
-              Clientes
-            </button>
-            <button
-              className={activeTab === 'produtos' ? 'active' : ''}
-              onClick={() => setActiveTab('produtos')}
-            >
-              Produtos
-            </button>
-          </nav>
-        </div>
-      </header>
+      <Header activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <main className="container">
         {renderContent()}
@@ -71,11 +44,22 @@ function App() {
         marginTop: '2rem'
       }}>
         <p>
-          <strong>⚡ Tecnologias utilizadas:</strong> React + Vite, Node.js, Express, MySQL<br/>
-          <strong>🔗 Relacionamentos implementados:</strong> 1:N (Cliente-Venda) e N:N (Venda-Produto)
+          <strong>⚡ Tecnologias utilizadas:</strong> React + Vite, Node.js, Express, MySQL, JWT<br/>
+          <strong>🔗 Relacionamentos implementados:</strong> 1:N (Cliente-Venda) e N:N (Venda-Produto)<br/>
+          <strong>🔐 Autenticação:</strong> JWT com sistema de login/logout
         </p>
       </footer>
     </div>
+  )
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <ProtectedRoute>
+        <AppContent />
+      </ProtectedRoute>
+    </AuthProvider>
   )
 }
 
