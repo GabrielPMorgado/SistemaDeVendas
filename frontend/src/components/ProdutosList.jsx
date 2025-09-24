@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { produtosAPI } from '../services/api';
+import './ProdutosList.css';
 
 const ProdutosList = () => {
   const [produtos, setProdutos] = useState([]);
@@ -96,123 +97,204 @@ const ProdutosList = () => {
     }).format(price);
   };
 
+  const getStockStatus = (estoque) => {
+    if (estoque <= 5) return { class: 'stock-low', icon: '⚠️', text: 'Baixo' };
+    if (estoque <= 20) return { class: 'stock-medium', icon: '📦', text: 'Médio' };
+    return { class: 'stock-normal', icon: '✅', text: 'Bom' };
+  };
+
+  const getStatistics = () => {
+    const total = produtos.length;
+    const lowStock = produtos.filter(p => p.estoque <= 5).length;
+    const totalValue = produtos.reduce((sum, p) => sum + (p.preco * p.estoque), 0);
+    const totalItems = produtos.reduce((sum, p) => sum + p.estoque, 0);
+    
+    return { total, lowStock, totalValue, totalItems };
+  };
+
+  const stats = getStatistics();
+
   if (loading && produtos.length === 0) {
-    return <div className="loading">Carregando produtos...</div>;
+    return (
+      <div className="produtos-container">
+        <div className="loading-modern">
+          <div className="loading-spinner-modern"></div>
+          <p>Carregando produtos...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="card">
-      <h2>⚡ Gerenciar Produtos</h2>
+    <div className="produtos-container fade-in">
+      <div className="produtos-header">
+        <h1 className="produtos-title">Gerenciar Produtos</h1>
+        <button 
+          className="add-product-btn" 
+          onClick={() => setShowForm(!showForm)}
+        >
+          {showForm ? '✖ Cancelar' : '➕ Novo Produto'}
+        </button>
+      </div>
       
       {error && (
-        <div className="alert alert-error">
+        <div className="alert-modern alert-error-modern">
           {error}
         </div>
       )}
 
-      <div style={{ marginBottom: '1rem' }}>
-        <button 
-          className="btn btn-primary" 
-          onClick={() => setShowForm(!showForm)}
-        >
-          {showForm ? 'Cancelar' : '+ Novo Produto'}
-        </button>
-      </div>
-
-      {showForm && (
-        <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
-          <div className="form-group">
-            <label>Nome *</label>
-            <input
-              type="text"
-              value={formData.nome}
-              onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-              required
-            />
+      {produtos.length > 0 && (
+        <div className="stats-container">
+          <div className="stat-card">
+            <div className="stat-icon">📦</div>
+            <div className="stat-content">
+              <div className="stat-number">{stats.total}</div>
+              <div className="stat-label">Produtos</div>
+            </div>
           </div>
           
-          <div className="form-group">
-            <label>Preço *</label>
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              value={formData.preco}
-              onChange={(e) => setFormData({ ...formData, preco: e.target.value })}
-              required
-            />
+          <div className="stat-card">
+            <div className="stat-icon">⚠️</div>
+            <div className="stat-content">
+              <div className="stat-number">{stats.lowStock}</div>
+              <div className="stat-label">Estoque Baixo</div>
+            </div>
           </div>
           
-          <div className="form-group">
-            <label>Estoque *</label>
-            <input
-              type="number"
-              min="0"
-              value={formData.estoque}
-              onChange={(e) => setFormData({ ...formData, estoque: e.target.value })}
-              required
-            />
+          <div className="stat-card">
+            <div className="stat-icon">💰</div>
+            <div className="stat-content">
+              <div className="stat-number">{formatPrice(stats.totalValue)}</div>
+              <div className="stat-label">Valor Total</div>
+            </div>
           </div>
           
-          <button type="submit" className="btn btn-success" disabled={loading}>
-            {editingId ? 'Atualizar' : 'Criar'} Produto
-          </button>
-          
-          <button type="button" className="btn btn-secondary" onClick={resetForm}>
-            Cancelar
-          </button>
-        </form>
+          <div className="stat-card">
+            <div className="stat-icon">📊</div>
+            <div className="stat-content">
+              <div className="stat-number">{stats.totalItems}</div>
+              <div className="stat-label">Itens Total</div>
+            </div>
+          </div>
+        </div>
       )}
 
-      <table className="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Preço</th>
-            <th>Estoque</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {produtos.map((produto) => (
-            <tr key={produto.id}>
-              <td>{produto.id}</td>
-              <td>{produto.nome}</td>
-              <td>{formatPrice(produto.preco)}</td>
-              <td>
-                <span style={{ 
-                  color: produto.estoque <= 5 ? '#e74c3c' : '#27ae60',
-                  fontWeight: produto.estoque <= 5 ? 'bold' : 'normal'
-                }}>
-                  {produto.estoque}
-                  {produto.estoque <= 5 && ' ⚠️'}
-                </span>
-              </td>
-              <td>
-                <button 
-                  className="btn btn-primary" 
-                  onClick={() => handleEdit(produto)}
-                  style={{ marginRight: '0.5rem' }}
-                >
-                  Editar
-                </button>
-                <button 
-                  className="btn btn-danger" 
-                  onClick={() => handleDelete(produto.id)}
-                >
-                  Deletar
-                </button>
-              </td>
+      {showForm && (
+        <div className="form-container fade-in">
+          <form onSubmit={handleSubmit}>
+            <div className="form-grid">
+              <div className="form-group-modern">
+                <label>📦 Nome do Produto *</label>
+                <input
+                  type="text"
+                  value={formData.nome}
+                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                  placeholder="Digite o nome do produto"
+                  required
+                />
+              </div>
+              
+              <div className="form-group-modern">
+                <label>💰 Preço (R$) *</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={formData.preco}
+                  onChange={(e) => setFormData({ ...formData, preco: e.target.value })}
+                  placeholder="0.00"
+                  required
+                />
+              </div>
+              
+              <div className="form-group-modern">
+                <label>📊 Quantidade em Estoque *</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={formData.estoque}
+                  onChange={(e) => setFormData({ ...formData, estoque: e.target.value })}
+                  placeholder="0"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div className="form-actions">
+              <button type="button" className="btn-modern btn-cancel-modern" onClick={resetForm}>
+                Cancelar
+              </button>
+              <button type="submit" className="btn-modern btn-success-modern" disabled={loading}>
+                {loading ? '⏳ Processando...' : (editingId ? '✏️ Atualizar' : '➕ Criar')} Produto
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      <div className="table-container">
+        <table className="table-modern">
+          <thead>
+            <tr>
+              <th>🆔 ID</th>
+              <th>📦 Produto</th>
+              <th>💰 Preço</th>
+              <th>📊 Estoque</th>
+              <th>⚙️ Ações</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {produtos.map((produto) => {
+              const stockStatus = getStockStatus(produto.estoque);
+              return (
+                <tr key={produto.id}>
+                  <td>
+                    <span className="product-id">#{produto.id}</span>
+                  </td>
+                  <td>
+                    <span className="product-name">{produto.nome}</span>
+                  </td>
+                  <td>
+                    <span className="product-price">{formatPrice(produto.preco)}</span>
+                  </td>
+                  <td>
+                    <span className={`stock-badge ${stockStatus.class}`}>
+                      {stockStatus.icon} {produto.estoque} unidades
+                    </span>
+                  </td>
+                  <td>
+                    <div className="actions-cell">
+                      <button 
+                        className="btn-action btn-edit" 
+                        onClick={() => handleEdit(produto)}
+                        title="Editar produto"
+                      >
+                        ✏️ Editar
+                      </button>
+                      <button 
+                        className="btn-action btn-delete" 
+                        onClick={() => handleDelete(produto.id)}
+                        title="Deletar produto"
+                      >
+                        🗑️ Deletar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
       
       {produtos.length === 0 && !loading && (
-        <p style={{ textAlign: 'center', color: '#7f8c8d', marginTop: '1rem' }}>
-          Nenhum produto encontrado
-        </p>
+        <div className="empty-state">
+          <div className="empty-state-icon">📦</div>
+          <h3 className="empty-state-text">Nenhum produto cadastrado</h3>
+          <p className="empty-state-subtext">
+            Clique em "Novo Produto" para começar a gerenciar seu estoque
+          </p>
+        </div>
       )}
     </div>
   );

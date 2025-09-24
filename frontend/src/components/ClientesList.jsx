@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { clientesAPI } from '../services/api';
+import './ClientesList.css';
 
 const ClientesList = () => {
   const [clientes, setClientes] = useState([]);
@@ -98,109 +99,143 @@ const ClientesList = () => {
   }
 
   return (
-    <div className="card">
-      <h2>⚡ Gerenciar Clientes</h2>
-      
-      {error && (
-        <div className="alert alert-error">
-          {error}
-        </div>
-      )}
-
-      <div style={{ marginBottom: '1rem' }}>
+    <div className="clientes-container">
+      <div className="clientes-header">
+        <h2 className="clientes-title">Gerenciar Clientes</h2>
         <button 
-          className="btn btn-primary" 
+          className="btn-add-modern" 
           onClick={() => setShowForm(!showForm)}
         >
           {showForm ? 'Cancelar' : '+ Novo Cliente'}
         </button>
       </div>
-
-      {showForm && (
-        <form onSubmit={handleSubmit} style={{ marginBottom: '2rem' }}>
-          <div className="form-group">
-            <label>Nome *</label>
-            <input
-              type="text"
-              value={formData.nome}
-              onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label>Email *</label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label>Telefone</label>
-            <input
-              type="text"
-              value={formData.telefone}
-              onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
-              placeholder="(11) 99999-9999"
-            />
-          </div>
-          
-          <button type="submit" className="btn btn-success" disabled={loading}>
-            {editingId ? 'Atualizar' : 'Criar'} Cliente
-          </button>
-          
-          <button type="button" className="btn btn-secondary" onClick={resetForm}>
-            Cancelar
-          </button>
-        </form>
+      
+      {error && (
+        <div className="alert-modern-clientes alert-error-modern-clientes">
+          {error}
+        </div>
       )}
 
-      <table className="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Email</th>
-            <th>Telefone</th>
-            <th>Data Cadastro</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {clientes.map((cliente) => (
-            <tr key={cliente.id}>
-              <td>{cliente.id}</td>
-              <td>{cliente.nome}</td>
-              <td>{cliente.email}</td>
-              <td>{cliente.telefone || 'Não informado'}</td>
-              <td>{formatDate(cliente.data_cadastro)}</td>
-              <td>
-                <button 
-                  className="btn btn-primary" 
-                  onClick={() => handleEdit(cliente)}
-                  style={{ marginRight: '0.5rem' }}
-                >
-                  Editar
-                </button>
-                <button 
-                  className="btn btn-danger" 
-                  onClick={() => handleDelete(cliente.id)}
-                >
-                  Deletar
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      {showForm && (
+        <div className="form-container-modern">
+          <form onSubmit={handleSubmit}>
+            <div className="form-grid-modern">
+              <div className="form-group-modern">
+                <label className="form-label-modern">Nome *</label>
+                <input
+                  type="text"
+                  className="form-input-modern"
+                  value={formData.nome}
+                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                  required
+                />
+              </div>
+              
+              <div className="form-group-modern">
+                <label className="form-label-modern">Email *</label>
+                <input
+                  type="email"
+                  className="form-input-modern"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  required
+                />
+              </div>
+              
+              <div className="form-group-modern">
+                <label className="form-label-modern">Telefone</label>
+                <input
+                  type="text"
+                  className="form-input-modern"
+                  value={formData.telefone}
+                  onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
+                  placeholder="(11) 99999-9999"
+                />
+              </div>
+            </div>
+            
+            <div className="form-actions-modern">
+              <button type="submit" className="btn-success-modern" disabled={loading}>
+                {editingId ? 'Atualizar' : 'Criar'} Cliente
+              </button>
+              
+              <button type="button" className="btn-cancel-modern" onClick={resetForm}>
+                Cancelar
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="loading-modern-clientes">
+          <div className="loading-spinner-modern-clientes"></div>
+          <p>Carregando clientes...</p>
+        </div>
+      ) : (
+        <div className="table-container-modern">
+          <table className="table-modern-clientes">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th>Data Cadastro</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {clientes.map((cliente) => (
+                <tr key={cliente.id}>
+                  <td>
+                    <span className="cliente-id">#{cliente.id}</span>
+                  </td>
+                  <td>
+                    <span className="cliente-nome">{cliente.nome}</span>
+                  </td>
+                  <td>
+                    <span className="cliente-email">{cliente.email}</span>
+                  </td>
+                  <td>
+                    <span className="cliente-telefone">
+                      {cliente.telefone || 'Não informado'}
+                    </span>
+                  </td>
+                  <td>
+                    <span className="cliente-data">{formatDate(cliente.data_cadastro)}</span>
+                  </td>
+                  <td>
+                    <div className="actions-cell-modern">
+                      <button 
+                        className="btn-edit-modern" 
+                        onClick={() => handleEdit(cliente)}
+                      >
+                        Editar
+                      </button>
+                      <button 
+                        className="btn-delete-modern" 
+                        onClick={() => handleDelete(cliente.id)}
+                      >
+                        Deletar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
       
       {clientes.length === 0 && !loading && (
-        <p style={{ textAlign: 'center', color: '#7f8c8d', marginTop: '1rem' }}>
-          Nenhum cliente encontrado
-        </p>
+        <div className="empty-state-modern">
+          <div className="empty-state-icon-modern">👥</div>
+          <div className="empty-state-text-modern">Nenhum cliente encontrado</div>
+          <div className="empty-state-subtext-modern">
+            Clique no botão "Novo Cliente" para adicionar o primeiro cliente
+          </div>
+        </div>
       )}
     </div>
   );

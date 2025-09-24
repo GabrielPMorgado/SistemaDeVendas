@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { vendasAPI } from '../services/api';
+import './VendasList.css';
 
 const VendasList = () => {
   const [vendas, setVendas] = useState([]);
@@ -66,87 +67,96 @@ const VendasList = () => {
   };
 
   if (loading && vendas.length === 0) {
-    return <div className="loading">⚡ Carregando histórico...</div>;
+    return (
+      <div className="vendas-container">
+        <div className="loading-modern-vendas">
+          <div className="loading-spinner-modern-vendas"></div>
+          <p>Carregando histórico de vendas...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div>
-      <div className="card">
-        <h2>⚡ Histórico de Vendas</h2>
-        
-        {error && (
-          <div className="alert alert-error">
-            ❌ {error}
-          </div>
-        )}
+    <div className="vendas-container">
+      <div className="vendas-header">
+        <h2 className="vendas-title">Histórico de Vendas</h2>
+      </div>
+      
+      {error && (
+        <div className="alert-modern-vendas alert-error-modern-vendas">
+          {error}
+        </div>
+      )}
 
-        <table className="table">
+      <div className="table-container-vendas">
+        <table className="table-modern-vendas">
           <thead>
             <tr>
               <th>ID</th>
-              <th>🧑‍💼 Cliente</th>
-              <th>💰 Total</th>
-              <th>📅 Data</th>
+              <th>Cliente</th>
+              <th>Total</th>
+              <th>Data</th>
               <th>Ações</th>
             </tr>
           </thead>
           <tbody>
             {vendas.map((venda) => (
               <tr key={venda.id}>
-                <td>#{venda.id}</td>
-                <td>{venda.cliente_nome}</td>
-                <td style={{ fontWeight: 'bold', color: '#27ae60' }}>
-                  {formatPrice(venda.total)}
-                </td>
-                <td>{formatDate(venda.data_venda)}</td>
                 <td>
-                  <button 
-                    className="btn btn-primary" 
-                    onClick={() => verDetalhes(venda.id)}
-                    style={{ marginRight: '0.5rem' }}
-                  >
-                    🔍 Detalhes
-                  </button>
-                  <button 
-                    className="btn btn-danger" 
-                    onClick={() => handleDelete(venda.id)}
-                  >
-                    🗑️ Deletar
-                  </button>
+                  <span className="venda-id">#{venda.id}</span>
+                </td>
+                <td>
+                  <span className="venda-cliente">{venda.cliente_nome}</span>
+                </td>
+                <td>
+                  <span className="venda-total">{formatPrice(venda.total)}</span>
+                </td>
+                <td>
+                  <span className="venda-data">{formatDate(venda.data_venda)}</span>
+                </td>
+                <td>
+                  <div className="actions-cell-vendas">
+                    <button 
+                      className="btn-view-modern" 
+                      onClick={() => verDetalhes(venda.id)}
+                    >
+                      Detalhes
+                    </button>
+                    <button 
+                      className="btn-delete-vendas" 
+                      onClick={() => handleDelete(venda.id)}
+                    >
+                      Deletar
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        
-        {vendas.length === 0 && !loading && (
-          <div style={{ 
-            textAlign: 'center', 
-            color: '#7f8c8d', 
-            marginTop: '2rem',
-            padding: '2rem',
-            background: '#f8f9fa',
-            borderRadius: '8px'
-          }}>
-            <p style={{ fontSize: '1.2rem', margin: 0 }}>
-              📈 Nenhuma venda encontrada
-            </p>
-            <p style={{ margin: '0.5rem 0 0 0' }}>
-              Registre a primeira venda na aba "Nova Venda"
-            </p>
-          </div>
-        )}
       </div>
+
+      {vendas.length === 0 && !loading && (
+        <div className="empty-state-vendas">
+          <div className="empty-state-icon-vendas">📈</div>
+          <div className="empty-state-text-vendas">Nenhuma venda encontrada</div>
+          <div className="empty-state-subtext-vendas">
+            Registre a primeira venda na aba "Nova Venda"
+          </div>
+        </div>
+      )}
+      )}
 
       {/* Modal de Detalhes da Venda */}
       {vendaDetalhada && (
-        <div className="card" style={{ marginTop: '1rem', border: '2px solid #3498db' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ color: '#3498db', margin: 0 }}>
+        <div className="venda-details">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h4 style={{ color: '#3498db', margin: 0 }}>
               🔍 Detalhes da Venda #{vendaDetalhada.id}
-            </h2>
+            </h4>
             <button 
-              className="btn btn-secondary" 
+              className="btn-cancel-modern" 
               onClick={() => setVendaDetalhada(null)}
             >
               ✕ Fechar
@@ -154,24 +164,24 @@ const VendasList = () => {
           </div>
           
           <div style={{ 
-            marginTop: '1rem',
-            padding: '1rem',
-            background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-            borderRadius: '8px'
+            padding: '20px',
+            background: 'white',
+            borderRadius: '8px',
+            marginBottom: '20px'
           }}>
-            <h3 style={{ margin: '0 0 1rem 0', color: '#2c3e50' }}>
+            <h4 style={{ margin: '0 0 15px 0', color: '#2c3e50' }}>
               🧑‍💼 Informações do Cliente (Relacionamento 1:N)
-            </h3>
+            </h4>
             <p><strong>Nome:</strong> {vendaDetalhada.cliente_nome}</p>
             <p><strong>Email:</strong> {vendaDetalhada.cliente_email}</p>
             <p><strong>Telefone:</strong> {vendaDetalhada.cliente_telefone || 'Não informado'}</p>
             <p><strong>Data da Venda:</strong> {formatDate(vendaDetalhada.data_venda)}</p>
           </div>
 
-          <h3 style={{ marginTop: '1.5rem', color: '#8e44ad' }}>
+          <h4 style={{ marginBottom: '15px', color: '#8e44ad' }}>
             📦 Produtos da Venda (Relacionamento N:N)
-          </h3>
-          <table className="table">
+          </h4>
+          <table className="produtos-venda-table">
             <thead>
               <tr>
                 <th>Produto</th>
@@ -196,17 +206,20 @@ const VendasList = () => {
             </tbody>
           </table>
           
-          <div className="total-venda" style={{ 
+          <div style={{ 
             background: 'linear-gradient(135deg, #27ae60, #2ecc71)',
             color: 'white',
-            fontSize: '1.5rem'
+            padding: '15px',
+            borderRadius: '8px',
+            textAlign: 'center',
+            fontSize: '1.5rem',
+            margin: '20px 0'
           }}>
             🎯 Total da Venda: {formatPrice(vendaDetalhada.total)}
           </div>
           
           <div style={{ 
-            marginTop: '1rem',
-            padding: '1rem',
+            padding: '15px',
             background: '#e8f5e8',
             borderRadius: '8px',
             fontSize: '0.9rem',
